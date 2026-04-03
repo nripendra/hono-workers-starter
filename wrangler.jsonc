@@ -1,0 +1,25 @@
+{
+  "name": "hono-workers-starter",
+  "compatibility_date": "2025-04-01",
+  "main": "dist/index.js",
+  // Set to false and configure custom domains when ready for production
+  "workers_dev": true,
+  // Uncomment and configure custom domains for production:
+  // "routes": [
+  //   {
+  //     "pattern": "example.com",
+  //     "custom_domain": true
+  //   }
+  // ],
+  "vars": {
+    "TURSO_DATABASE_URL": "libsql://your-database.turso.io",
+    // Add your public (non-secret) environment variables here
+  },
+  // Secrets (set via: bunx wrangler secret put <NAME>):
+  // TURSO_AUTH_TOKEN
+  // PREVIEW_ACCESS_KEY
+  // R2_ENDPOINT
+  // R2_ACCESS_KEY_ID
+  // R2_SECRET_ACCESS_KEY
+  // R2_PUBLIC_URL
+}

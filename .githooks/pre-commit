@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+# Sync AGENTS.md → CLAUDE.md if they differ
+if [ -f AGENTS.md ]; then
+  if ! cmp -s AGENTS.md CLAUDE.md 2>/dev/null; then
+    cp AGENTS.md CLAUDE.md
+    git add CLAUDE.md
+  fi
+fi

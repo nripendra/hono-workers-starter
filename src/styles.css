@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  background: #fafafa;
+}
+
+body {
+  font-family: "Inter", "Avenir Next", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+}
