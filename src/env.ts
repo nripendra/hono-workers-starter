@@ -11,6 +11,6 @@ export type AppEnv = {
     R2_PUBLIC_URL: string;
   };
   Variables: {
-    db: Client;
+    db?: Client;
   };
 };
