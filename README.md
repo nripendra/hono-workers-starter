@@ -17,7 +17,6 @@ bun run dev
 | Command                   | Description                       |
 | ------------------------- | --------------------------------- |
 | `bun run dev`             | Start Vite dev server with HMR    |
-| `bun run start`           | Run with Bun directly (no Vite)   |
 | `bun run build:worker`    | Build the Cloudflare Worker       |
 | `bun run preview:worker`  | Build and preview with Wrangler   |
 | `bun run deploy`          | Build and deploy to Cloudflare    |
@@ -28,7 +27,6 @@ bun run dev
 ## Project structure
 
 ```
-├── index.ts                    # Bun server entry point
 ├── src/
 │   ├── server.ts               # Hono app for local dev (Vite)
 │   ├── worker.ts               # Hono app for Cloudflare Workers

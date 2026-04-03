@@ -6,7 +6,7 @@ export function createDb(url: string, authToken?: string): Client {
   return createClient({ url, authToken });
 }
 
-/** Global singleton for CLI scripts (migrate, seed) and local Bun server */
+/** Global singleton for CLI scripts (migrate, seed) */
 let _globalDb: Client | undefined;
 export function getGlobalDb(): Client {
   if (!_globalDb) {

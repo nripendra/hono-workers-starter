@@ -2,11 +2,9 @@
   "name": "hono-workers-starter",
   "private": true,
   "type": "module",
-  "module": "index.ts",
   "scripts": {
     "dev": "bunx --bun vite",
     "build": "bunx --bun vite build",
-    "start": "bun index.ts",
     "db:migrate": "bun src/data/migrate.ts",
     "db:migrate:prod": "bun --no-env-file --env-file=.env.production.local src/data/migrate.ts",
     "db:seed": "bun src/data/seed.ts",
@@ -15,8 +13,8 @@
     "deploy": "vite build --config vite.config.build.ts && wrangler deploy",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
-    "fmt": "oxfmt --write src/ index.ts",
-    "fmt:check": "oxfmt --check src/ index.ts",
+    "fmt": "oxfmt --write src/",
+    "fmt:check": "oxfmt --check src/",
     "prepare": "git config core.hooksPath .githooks"
   },
   "dependencies": {

@@ -1,15 +1,16 @@
-Default to using Bun instead of Node.js.
+Bun is used as the package manager and script runner. Do not use Bun runtime APIs in application code — the production runtime is Cloudflare Workers.
 
-- Use `bun <file>` instead of `node <file>` or `ts-node <file>`
-- Use `bun test` instead of `jest` or `vitest`
 - Use `bun install` instead of `npm install` or `yarn install` or `pnpm install`
 - Use `bun run <script>` instead of `npm run <script>` or `yarn run <script>` or `pnpm run <script>`
 - Use `bunx <package> <command>` instead of `npx <package> <command>`
+- Use `bun test` for running tests locally (test files can use `bun:test`)
 - Bun automatically loads .env, so don't use dotenv.
+- Do not use `Bun.serve()`, `Bun.file()`, `Bun.password`, `bun:sqlite`, or other Bun runtime APIs in application code — they are not available in Cloudflare Workers.
 
 ## Stack
 
-- **Runtime:** Bun (local dev) / Cloudflare Workers (production)
+- **Package manager / script runner:** Bun
+- **Runtime:** Cloudflare Workers (production), Vite dev server (local dev)
 - **Framework:** Hono with JSX/TSX views
 - **Database:** Turso (managed SQLite via @libsql/client)
 - **CSS:** Tailwind CSS 4
@@ -64,6 +65,7 @@ Auth is intentionally excluded from the template — the schema and session shap
    - On invalid/missing session, redirect to the login page
 
 3. **Mount the middleware in `src/routes/admin.tsx`** before route handlers:
+
    ```ts
    // Public auth routes (login, callback) go BEFORE the middleware
    app.route("/auth", authRoutes);
@@ -73,11 +75,12 @@ Auth is intentionally excluded from the template — the schema and session shap
    app.get("/", (c) => c.html(<AdminDashboardPage />));
    ```
 
-4. **For password auth**: use the Web Crypto API (`crypto.subtle`) for hashing — it works in both Cloudflare Workers and Bun. Use PBKDF2 or import a lightweight library. Do not use `Bun.password` or `bcrypt` as they are not available in the Workers runtime.
+4. **For password auth**: use the Web Crypto API (`crypto.subtle`) for hashing with PBKDF2, or import a lightweight library. Do not use `Bun.password` or `bcrypt` — they are not available in the Cloudflare Workers runtime.
 
 5. **For OAuth** (e.g. Google): implement the OAuth flow manually with `fetch()` calls to the provider's token and userinfo endpoints. Store `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and allowed emails as env vars/secrets.
 
 6. **Update `src/env.ts`** — Add auth-related bindings and variables:
+
    ```ts
    Bindings: {
      ADMIN_SESSION_SECRET: string;
