@@ -9,7 +9,7 @@ const faviconSvg = String.raw`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0
 
 const faviconHeaders = {
   "Content-Type": "image/svg+xml; charset=utf-8",
-  "Cache-Control": "public, max-age=31536000, immutable",
+  "Cache-Control": "public, max-age=3600",
 } as const;
 
 export function registerBrandingRoutes(app: Hono<AppEnv>) {
