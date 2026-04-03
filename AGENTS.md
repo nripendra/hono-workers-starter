@@ -73,7 +73,7 @@ Auth is intentionally excluded from the template — the schema and session shap
    app.get("/", (c) => c.html(<AdminDashboardPage />));
    ```
 
-4. **For password auth**: use `Bun.password.hash()` and `Bun.password.verify()` (built-in bcrypt, no extra dependencies). For Workers deployment, use the Web Crypto API or a lightweight library since `Bun.password` is not available in the Workers runtime.
+4. **For password auth**: use the Web Crypto API (`crypto.subtle`) for hashing — it works in both Cloudflare Workers and Bun. Use PBKDF2 or import a lightweight library. Do not use `Bun.password` or `bcrypt` as they are not available in the Workers runtime.
 
 5. **For OAuth** (e.g. Google): implement the OAuth flow manually with `fetch()` calls to the provider's token and userinfo endpoints. Store `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and allowed emails as env vars/secrets.
 
