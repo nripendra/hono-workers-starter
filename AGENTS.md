@@ -27,6 +27,20 @@ Default to using Bun instead of Node.js.
 - `src/server.ts` is the local dev entry, `src/worker.ts` is the Cloudflare Worker entry
 - Environment types are defined in `src/env.ts`
 
+## Adding database support
+
+The database is optional by default. When adding DB support to a project:
+
+1. **`src/env.ts`** — Change `db?: Client` to `db: Client` in the `Variables` type to make it required
+2. **`src/middleware/db.ts`** — Add a throw when `TURSO_DATABASE_URL` is missing so misconfiguration is caught early:
+   ```ts
+   if (!url) {
+     throw new Error("TURSO_DATABASE_URL is not set");
+   }
+   ```
+3. **`src/data/migrations/`** — Create your first migration (see `001_example.ts` for the pattern)
+4. **`.env`** — Set `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN`
+
 ## Testing
 
 Use `bun test` to run tests.
