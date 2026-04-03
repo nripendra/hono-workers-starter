@@ -41,6 +41,63 @@ The database is optional by default. When adding DB support to a project:
 3. **`src/data/migrations/`** — Create your first migration (see `001_example.ts` for the pattern)
 4. **`.env`** — Set `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN`
 
+## Adding admin authentication
+
+Auth is intentionally excluded from the template — the schema and session shape are domain-specific. When adding auth, follow this approach:
+
+### Where things go
+
+- **`src/middleware/admin-auth.ts`** — Auth middleware that protects `/admin` routes
+- **`src/routes/admin.tsx`** — Mount the auth middleware before admin route handlers
+- **`src/data/admin-users.ts`** — User lookup, password verification, session queries
+- **`src/views/pages/LoginPage.tsx`** — Login form page
+
+### Implementation steps
+
+1. **Choose an auth strategy** (password, OAuth, or both) and create a migration for the users table. The table schema depends on the strategy — at minimum: `id`, `username`/`email`, `created_at`. Add `password_hash` for password auth, `auth_provider` for OAuth.
+
+2. **Create the auth middleware** (`src/middleware/admin-auth.ts`):
+   - Use Hono's `getSignedCookie`/`setSignedCookie` for session cookies
+   - Add an `ADMIN_SESSION_SECRET` env var for cookie signing
+   - Store session data in the cookie (e.g. `{ userId, email, expiresAt }`)
+   - On valid session, set user info on the Hono context via `c.set()` and update `Variables` in `src/env.ts`
+   - On invalid/missing session, redirect to the login page
+
+3. **Mount the middleware in `src/routes/admin.tsx`** before route handlers:
+   ```ts
+   // Public auth routes (login, callback) go BEFORE the middleware
+   app.route("/auth", authRoutes);
+
+   // Everything after this requires authentication
+   app.use(adminAuthMiddleware);
+   app.get("/", (c) => c.html(<AdminDashboardPage />));
+   ```
+
+4. **For password auth**: use `Bun.password.hash()` and `Bun.password.verify()` (built-in bcrypt, no extra dependencies). For Workers deployment, use the Web Crypto API or a lightweight library since `Bun.password` is not available in the Workers runtime.
+
+5. **For OAuth** (e.g. Google): implement the OAuth flow manually with `fetch()` calls to the provider's token and userinfo endpoints. Store `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and allowed emails as env vars/secrets.
+
+6. **Update `src/env.ts`** — Add auth-related bindings and variables:
+   ```ts
+   Bindings: {
+     ADMIN_SESSION_SECRET: string;
+     // ... other auth env vars
+   };
+   Variables: {
+     adminUserId?: number;
+     adminEmail?: string;
+     // ... other session data
+   };
+   ```
+
+7. **Update `AdminLayout.tsx`** — Accept and display the authenticated user's identity, add a sign-out link.
+
+### Security notes
+
+- Set session cookies as `httpOnly`, `secure`, `sameSite: "Lax"`
+- Use a reasonable expiry (e.g. 7 days) and rotate secrets periodically
+- Store secrets via `wrangler secret put`, never in `wrangler.jsonc` vars
+
 ## Testing
 
 Use `bun test` to run tests.
